@@ -1,12 +1,11 @@
 package com.api.parkingcontrol.projections;
 
+import com.api.parkingcontrol.models.CarModel;
+
 public interface LicensePlateProjection {
     String getParkingSpotNumber();
     String getResponsibleName();
-    String getLicensePlateCar();
-    String getBrandCar();
-    String getModelCar();
-    String getColorCar();
+    CarModel getCarModel();
     String getApartment();
     String getBlock();
     String getId();

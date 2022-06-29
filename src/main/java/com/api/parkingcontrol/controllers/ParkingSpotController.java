@@ -4,7 +4,9 @@ import com.api.parkingcontrol.dtos.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.projections.LicensePlateProjection;
 import com.api.parkingcontrol.projections.ResponsibleNameProjection;
+import com.api.parkingcontrol.repositories.ParkingSpotRepository;
 import com.api.parkingcontrol.services.ParkingSpotService;
+import com.api.parkingcontrol.validators.CheckIfExistsValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,24 +24,16 @@ import java.util.UUID;
 @RequestMapping("/parking-spot")
 public class ParkingSpotController {
     final ParkingSpotService parkingSpotService;
-    public static final String FIND_BRAND = "SELECT brand_car FROM tb_parking_spot";
+    final ParkingSpotRepository parkingSpotRepository;
 
-    public ParkingSpotController(ParkingSpotService parkingSpotService) {
+    public ParkingSpotController(ParkingSpotService parkingSpotService, ParkingSpotRepository parkingSpotRepository) {
         this.parkingSpotService = parkingSpotService;
+        this.parkingSpotRepository = parkingSpotRepository;
     }
 
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto){
-        if(parkingSpotService.existsByLicensePlateCar(parkingSpotDto.getLicensePlateCar())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: License Plate car is already in use!");
-        }
-        if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parkking Spot is already in use!");
-        }
-        if(parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Apartment has already parking spot!");
-        } // colocar essas verificações em um custom validator
-
+        var checkIfExistsValidator = new CheckIfExistsValidator(parkingSpotRepository);
         var parkingSpotModel = new ParkingSpotModel();
         BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
         parkingSpotModel.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")));
@@ -60,14 +54,7 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
     }
 
-    @GetMapping("/license-plate/{licensePlateCar}")
-    public ResponseEntity<Object> getParkingSpotByLicensePLate(@PathVariable(value = "licensePlateCar") String licensePlateCar){
-        List<LicensePlateProjection> licensePlateCarOptional = parkingSpotService.findAll(licensePlateCar);
-        if(licensePlateCarOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("License plate not found!");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(licensePlateCarOptional);
-    }
+
 
     @GetMapping("/responsible-name/{responsibleName}")
     public ResponseEntity<Object> getParkingSpotByResponsibleName(@PathVariable(value = "responsibleName") String responsibleName){
@@ -96,14 +83,18 @@ public class ParkingSpotController {
         }
         var parkingSpotModel = parkingSpotModelOptional.get();
         parkingSpotModel.setParkingSpotNumber(parkingSpotDto.getParkingSpotNumber());
-        parkingSpotModel.setModelCar(parkingSpotDto.getModelCar());
-        parkingSpotModel.setBrandCar(parkingSpotDto.getBrandCar());
-        parkingSpotModel.setColorCar(parkingSpotDto.getColorCar());
-        parkingSpotModel.setLicensePlateCar(parkingSpotDto.getLicensePlateCar());
+        parkingSpotModel.setCarModel(parkingSpotDto.getCarModel());
         parkingSpotModel.setResponsibleName(parkingSpotDto.getResponsibleName());
         parkingSpotModel.setApartment(parkingSpotDto.getApartment());
         parkingSpotModel.setBlock(parkingSpotDto.getBlock());
-
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
+        if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
+        }
+        if(parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Apartment has already parking spot!");
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
+        }
     }
 }

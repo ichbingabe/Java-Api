@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.repositories;
 
+import com.api.parkingcontrol.models.CarModel;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.projections.LicensePlateProjection;
 import com.api.parkingcontrol.projections.ResponsibleNameProjection;
@@ -11,10 +12,10 @@ import java.util.UUID;
 
 @Repository
 public interface ParkingSpotRepository extends JpaRepository<ParkingSpotModel, UUID> {
-    boolean existsByLicensePlateCar(String licensePlateCar);
+    boolean existsByCarModel(CarModel carModel);
     boolean existsByParkingSpotNumber(String parkingSpotNumber);
     boolean existsByApartmentAndBlock(String apartment, String block);
 
-    List<LicensePlateProjection> findAllParkingSpotByLicensePlateCar(String brandCar);
+    List<LicensePlateProjection> findAllParkingSpotByCarModel(CarModel carModel);
     List<ResponsibleNameProjection> findAllParkingSpotByResponsibleName(String responsibleName);
 }

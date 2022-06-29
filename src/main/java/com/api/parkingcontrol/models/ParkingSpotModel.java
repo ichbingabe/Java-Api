@@ -15,14 +15,6 @@ public class ParkingSpotModel implements Serializable {
     private UUID id;
     @Column(nullable = false, length = 10, unique = true)
     private String parkingSpotNumber;
-    @Column(nullable = false, length = 7, unique = true)
-    private String licensePlateCar;
-    @Column(name = "brandCar",nullable = false, length = 70)
-    private String brandCar;
-    @Column(nullable = false, length = 70)
-    private String modelCar;
-    @Column(nullable = false, length = 70)
-    private String colorCar;
     @Column(nullable = false)
     private LocalDateTime registrationDate;
     @Column(nullable = false, length = 130)
@@ -32,6 +24,15 @@ public class ParkingSpotModel implements Serializable {
     @Column(nullable = false, length = 30)
     private String block;
 
+    private CarModel carModel;
+
+    public CarModel getCarModel() {
+        return this.carModel;
+    }
+
+    public void setCarModel(CarModel carModel) {
+        this.carModel = carModel;
+    }
 
     public UUID getId() {
         return id;
@@ -47,38 +48,6 @@ public class ParkingSpotModel implements Serializable {
 
     public void setParkingSpotNumber(String parkingSpotNumber) {
         this.parkingSpotNumber = parkingSpotNumber;
-    }
-
-    public String getLicensePlateCar() {
-        return licensePlateCar;
-    }
-
-    public void setLicensePlateCar(String licensePlateCar) {
-        this.licensePlateCar = licensePlateCar;
-    }
-
-    public String getBrandCar() {
-        return brandCar;
-    }
-
-    public void setBrandCar(String brandCar) {
-        this.brandCar = brandCar;
-    }
-
-    public String getModelCar() {
-        return modelCar;
-    }
-
-    public void setModelCar(String modelCar) {
-        this.modelCar = modelCar;
-    }
-
-    public String getColorCar() {
-        return colorCar;
-    }
-
-    public void setColorCar(String colorCar) {
-        this.colorCar = colorCar;
     }
 
     public LocalDateTime getRegistrationDate() {

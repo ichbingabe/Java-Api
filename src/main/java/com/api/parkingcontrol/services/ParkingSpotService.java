@@ -1,5 +1,6 @@
 package com.api.parkingcontrol.services;
 
+import com.api.parkingcontrol.models.CarModel;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.projections.LicensePlateProjection;
 import com.api.parkingcontrol.projections.ResponsibleNameProjection;
@@ -24,8 +25,8 @@ public class ParkingSpotService {
         return parkingSpotRepository.save(parkingSpotModel);
     }
 
-    public boolean existsByLicensePlateCar(String licensePlateCar) {
-        return parkingSpotRepository.existsByLicensePlateCar(licensePlateCar);
+    public boolean existsByLicensePlateCar(CarModel carModel) {
+        return parkingSpotRepository.existsByCarModel(carModel);
     }
 
     public boolean existsByParkingSpotNumber(String parkingSpotNumber) {
@@ -40,8 +41,8 @@ public class ParkingSpotService {
         return parkingSpotRepository.findAll();
     }
 
-    public List<LicensePlateProjection> findAll(String licensePlateCar){
-        return parkingSpotRepository.findAllParkingSpotByLicensePlateCar(licensePlateCar);
+    public List<LicensePlateProjection> findAll(CarModel carModel){
+        return parkingSpotRepository.findAllParkingSpotByCarModel(carModel);
     }
 
     public List<ResponsibleNameProjection> find(String responsibleName){
