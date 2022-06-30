@@ -94,7 +94,8 @@ public class ParkingSpotController {
         if(responsibleNameOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Responsible name not found!");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(responsibleNameOptional);
+        var parkingSpotModel = responsibleNameOptional.get();
+        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModel.getCarModel());
     }
 
     @PutMapping("/responsible-name/{responsibleName}/car")
