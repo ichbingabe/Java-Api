@@ -7,7 +7,9 @@ import com.api.parkingcontrol.projections.ResponsibleNameProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -18,4 +20,5 @@ public interface ParkingSpotRepository extends JpaRepository<ParkingSpotModel, U
 
     List<LicensePlateProjection> findAllParkingSpotByCarModel(CarModel carModel);
     List<ResponsibleNameProjection> findAllParkingSpotByResponsibleName(String responsibleName);
+    Optional<ParkingSpotModel> findCarModelByResponsibleName(String responsibleName);
 }

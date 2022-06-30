@@ -2,7 +2,6 @@ package com.api.parkingcontrol.controllers;
 
 import com.api.parkingcontrol.dtos.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotModel;
-import com.api.parkingcontrol.projections.ResponsibleNameProjection;
 import com.api.parkingcontrol.repositories.ParkingSpotRepository;
 import com.api.parkingcontrol.services.ParkingSpotService;
 import org.springframework.beans.BeanUtils;
@@ -57,31 +56,10 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
     }
 
-
-
-    @GetMapping("/responsible-name/{responsibleName}")
-    public ResponseEntity<Object> getParkingSpotByResponsibleName(@PathVariable(value = "responsibleName") String responsibleName){
-        List<ResponsibleNameProjection> responsibleNameOptional = parkingSpotService.find(responsibleName);
-        if(responsibleNameOptional.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resposible name not found!");
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(responsibleNameOptional);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteParkingSpotById(@PathVariable(value = "id") UUID id){
-        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if(!parkingSpotModelOptional.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found!");
-        }
-        parkingSpotService.delete(parkingSpotModelOptional.get());
-        return ResponseEntity.status(HttpStatus.OK).body("Parking spot deleted successfully!");
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateParkingSpotById(@PathVariable(value = "id") UUID id, @RequestBody @Valid ParkingSpotDto parkingSpotDto){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if(!parkingSpotModelOptional.isPresent()){
+        if(parkingSpotModelOptional.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found!");
         }
         var parkingSpotModel = parkingSpotModelOptional.get();
@@ -98,5 +76,33 @@ public class ParkingSpotController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
 
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteParkingSpotById(@PathVariable(value = "id") UUID id){
+        Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
+        if(parkingSpotModelOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found!");
+        }
+        parkingSpotService.delete(parkingSpotModelOptional.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Parking spot deleted successfully!");
+    }
+
+    @GetMapping("/responsible-name/{responsibleName}/car")
+    public ResponseEntity<Object> getCarModelByResponsibleName(@PathVariable(value = "responsibleName") String responsibleName){
+        Optional<ParkingSpotModel> responsibleNameOptional = parkingSpotService.findCarModelByResponsibleName(responsibleName);
+        if(responsibleNameOptional.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Responsible name not found!");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(responsibleNameOptional);
+    }
+
+    @PutMapping("/responsible-name/{responsibleName}/car")
+    public ResponseEntity<Object> putCarModelByResponsibleName(@PathVariable(value = "responsibleName") String responsibleName, @RequestBody @Valid ParkingSpotDto parkingSpotDto){
+        Optional<ParkingSpotModel> responsibleNameOptional = parkingSpotService.findCarModelByResponsibleName(responsibleName);
+        var parkingSpotModel = responsibleNameOptional.get();
+        parkingSpotModel.setCarModel(parkingSpotDto.getCarModel());
+
+        return ResponseEntity.status(HttpStatus.OK).body(responsibleNameOptional.get());
     }
 }

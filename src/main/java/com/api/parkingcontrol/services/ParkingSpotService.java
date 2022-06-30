@@ -45,8 +45,8 @@ public class ParkingSpotService {
         return parkingSpotRepository.findAllParkingSpotByCarModel(carModel);
     }
 
-    public List<ResponsibleNameProjection> find(String responsibleName){
-        return parkingSpotRepository.findAllParkingSpotByResponsibleName(responsibleName);
+    public Optional<ParkingSpotModel> findCarModelByResponsibleName(String responsibleName){
+        return parkingSpotRepository.findCarModelByResponsibleName(responsibleName);
     }
 
     public Optional<ParkingSpotModel> findById(UUID id) {
