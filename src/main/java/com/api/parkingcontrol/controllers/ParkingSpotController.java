@@ -28,8 +28,16 @@ public class ParkingSpotController {
         this.parkingSpotRepository = parkingSpotRepository;
     }
 
+    @GetMapping
+    public ResponseEntity<List<ParkingSpotModel>> getAllParkingSpots(){
+        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll());
+    }
+
     @PostMapping
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto){
+        if(parkingSpotService.existsByCarModel(parkingSpotDto.getCarModel())){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Car already registered!");
+        }
         if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())){
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
         }
@@ -42,10 +50,6 @@ public class ParkingSpotController {
         return ResponseEntity.status(HttpStatus.CREATED).body(parkingSpotService.save(parkingSpotModel));
     }
 
-    @GetMapping
-    public ResponseEntity<List<ParkingSpotModel>> getAllParkingSpots(){
-        return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll());
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Object> getParkingSpotById(@PathVariable(value = "id") UUID id){
@@ -59,7 +63,7 @@ public class ParkingSpotController {
     @PutMapping("/{id}")
     public ResponseEntity<Object> updateParkingSpotById(@PathVariable(value = "id") UUID id, @RequestBody @Valid ParkingSpotDto parkingSpotDto){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
-        if(parkingSpotModelOptional.isEmpty()){
+        if(!parkingSpotModelOptional.isPresent()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parking Spot not found!");
         }
         var parkingSpotModel = parkingSpotModelOptional.get();
@@ -68,12 +72,7 @@ public class ParkingSpotController {
         parkingSpotModel.setResponsibleName(parkingSpotDto.getResponsibleName());
         parkingSpotModel.setApartment(parkingSpotDto.getApartment());
         parkingSpotModel.setBlock(parkingSpotDto.getBlock());
-        if(parkingSpotService.existsByParkingSpotNumber(parkingSpotDto.getParkingSpotNumber())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Parking Spot is already in use!");
-        }
-        if(parkingSpotService.existsByApartmentAndBlock(parkingSpotDto.getApartment(), parkingSpotDto.getBlock())){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: Apartment has already parking spot!");
-        }
+
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotModelOptional.get());
 
     }
@@ -102,7 +101,7 @@ public class ParkingSpotController {
     public ResponseEntity<Object> putCarModelByResponsibleName(@PathVariable(value = "responsibleName") String responsibleName, @RequestBody @Valid ParkingSpotDto parkingSpotDto){
         Optional<ParkingSpotModel> responsibleNameOptional = parkingSpotService.findCarModelByResponsibleName(responsibleName);
         var parkingSpotModel = responsibleNameOptional.get();
-        parkingSpotModel.setCarModel(parkingSpotDto.getCarModel());
+        BeanUtils.copyProperties(parkingSpotDto, parkingSpotModel);
 
         return ResponseEntity.status(HttpStatus.OK).body(responsibleNameOptional.get());
     }

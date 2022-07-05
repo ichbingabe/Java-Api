@@ -2,8 +2,6 @@ package com.api.parkingcontrol.services;
 
 import com.api.parkingcontrol.models.CarModel;
 import com.api.parkingcontrol.models.ParkingSpotModel;
-import com.api.parkingcontrol.projections.LicensePlateProjection;
-import com.api.parkingcontrol.projections.ResponsibleNameProjection;
 import com.api.parkingcontrol.repositories.ParkingSpotRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +23,7 @@ public class ParkingSpotService {
         return parkingSpotRepository.save(parkingSpotModel);
     }
 
-    public boolean existsByLicensePlateCar(CarModel carModel) {
+    public boolean existsByCarModel(CarModel carModel) {
         return parkingSpotRepository.existsByCarModel(carModel);
     }
 
@@ -39,10 +37,6 @@ public class ParkingSpotService {
 
     public List<ParkingSpotModel> findAll(){
         return parkingSpotRepository.findAll();
-    }
-
-    public List<LicensePlateProjection> findAll(CarModel carModel){
-        return parkingSpotRepository.findAllParkingSpotByCarModel(carModel);
     }
 
     public Optional<ParkingSpotModel> findCarModelByResponsibleName(String responsibleName){
