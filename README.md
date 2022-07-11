@@ -13,7 +13,7 @@ Api para gerenciamento de estacionamento de condominios.
 | Projections| define entidades e colunas que são retornadas por uma query          |
 
 
-https://imgur.com/4kd5VUg
+![Repara no Fiat Uno](https://imgur.com/4kd5VUg)
 
 #### Funcionalidades
 1. Cadastra um carro a uma vaga
