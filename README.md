@@ -12,6 +12,9 @@ Api para gerenciamento de estacionamento de condominios.
 | controller | serviços http baseados na arquitetura REST                           |
 | Projections| define entidades e colunas que são retornadas por uma query          |
 
+
+https://imgur.com/4kd5VUg
+
 #### Funcionalidades
 1. Cadastra um carro a uma vaga
 ```
