@@ -2,7 +2,6 @@ package com.api.parkingcontrol.dtos;
 
 import com.api.parkingcontrol.models.CarModel;
 
-import javax.mail.Address;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
